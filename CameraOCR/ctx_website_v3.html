@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>反光偵測</title>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
+</head>
+<body>
+	<h1>反光偵測</h1>
+	<canvas id="canvas" width="640" height="480"></canvas>
+	<button id="detect-btn">偵測反光</button>
+	<div id="result"></div>
+    <script src="https://docs.opencv.org/master/opencv.js"></script>
+	<script>
+		const video = document.createElement('video');
+		const canvas = document.getElementById('canvas');
+		const ctx = canvas.getContext('2d');
+		const detectBtn = document.getElementById('detect-btn');
+		const result = document.getElementById('result');
+
+		// 取得攝影機影像
+		async function getMediaStream() {
+			const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+			video.srcObject = stream;
+			await video.play();
+		}
+        
+        // 持續顯示攝影機畫面
+        function renderFrame() {
+            // 清除畫布
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // 繪製攝影機畫面
+            ctx.drawImage(video, 0, 0, video.videoWidth, video.videoHeight, 0, 0, canvas.width, canvas.height);
+
+            // ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+            // 持續更新畫面
+            requestAnimationFrame(renderFrame);
+        }
+
+		// 偵測反光
+		function detectReflection() {
+			// 取得影像資料
+			ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+			const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+
+			// 偵測反光
+			const result = detectReflectionInImageData(imageData);
+
+			// 顯示結果
+			document.getElementById('result').textContent = `偵測結果：${result}`;
+		}
+
+        // ctx to cv
+        function ConvertToCv(imageData) {
+            // 取得寬度和高度
+            var width = imageData.width;
+            var height = imageData.height;
+
+            // 取得數據
+            var data = imageData.data;
+
+            // 將數據轉換為一維數組
+            var pixels = new Uint8Array(width * height * 3);
+            for (var i = 0, j = 0; i < data.length; i += 4, j += 3) {
+                pixels[j] = data[i];
+                pixels[j + 1] = data[i + 1];
+                pixels[j + 2] = data[i + 2];
+            }
+
+            // 將一維數組重新組織為2D數組，並轉換為NumPy數組
+            var img = cv.matFromArray(height, width, cv.CV_8UC3, pixels);
+            return img;
+        }
+
+		// 偵測反光
+		function detectReflectionInImageData(imageData) {
+            const threshold = 0.5; // 反光閾值
+            // const sobelThreshold = 0.2; // Sobel 閾值
+            // const grayData = toGrayScale(imageData); // 將影像轉為灰階
+            // const sobelData = sobelEdgeDetection(grayData); // 使用 Sobel 算子偵測邊緣
+            // const reflectionRatio = calculateReflectionRatio(grayData, sobelData, sobelThreshold); // 計算反光佔比
+            // return reflectionRatio > threshold;
+
+            const img = ConvertToCv(imageData);
+            // const img = cv.imread(image);
+            const gray = new cv.Mat();
+            cv.cvtColor(img, gray, cv.COLOR_RGBA2GRAY);
+            const edges = new cv.Mat();
+            cv.Sobel(gray, edges, cv.CV_8U, 1, 1);
+            let reflectionCount = 0;
+            let totalCount = 0;
+            const sobelThreshold = 50;
+            for (let i = 0; i < edges.rows; i++) {
+                for (let j = 0; j < edges.cols; j++) {
+                    const sobelIntensity = edges.ucharPtr(i, j)[0];
+                    if (sobelIntensity > sobelThreshold) {
+                        const pixel = gray.ucharPtr(i, j)[0];
+                        if (pixel > 128) {
+                            reflectionCount++;
+                        }
+                        totalCount++;
+                    }
+                }
+            }
+            const reflectionRatio = reflectionCount / totalCount;
+
+            return reflectionRatio > threshold;
+		}
+
+        function toGrayScale(imageData) {
+            const grayData = new Uint8ClampedArray(imageData.data.length / 4);
+            for (let i = 0; i < imageData.data.length; i += 4) {
+                const r = imageData.data[i];
+                const g = imageData.data[i + 1];
+                const b = imageData.data[i + 2];
+                const gray = 0.299 * r + 0.587 * g + 0.114 * b; // 加權平均法將 RGB 轉為灰階
+                grayData[i / 4] = gray;
+            }
+            return grayData;
+        }
+        function sobelEdgeDetection(data) {
+            const sobelX = [
+                [-1, 0, 1],
+                [-2, 0, 2],
+                [-1, 0, 1]
+            ];
+            const sobelY = [
+                [-1, -2, -1],
+                [0, 0, 0],
+                [1, 2, 1]
+            ];
+            const width = Math.sqrt(data.length);
+            const gx = new Float32Array(data.length);
+            const gy = new Float32Array(data.length);
+            for (let y = 1; y < width - 1; y++) {
+                for (let x = 1; x < width - 1; x++) {
+                let sumX = 0, sumY = 0;
+                for (let j = -1; j <= 1; j++) {
+                    for (let i = -1; i <= 1; i++) {
+                    const idx = (y + j) * width + (x + i);
+                    sumX += sobelX[j + 1][i + 1] * data[idx];
+                    sumY += sobelY[j + 1][i + 1] * data[idx];
+                    }
+                }
+                gx[y * width + x] = sumX;
+                gy[y * width + x] = sumY;
+                }
+            }
+            const sobelData = new Float32Array(data.length);
+            for (let i = 0; i < data.length; i++) {
+                sobelData[i] = Math.sqrt(gx[i] * gx[i] + gy[i] * gy[i]); // 計算 Sobel 邊緣強度
+            }
+            return sobelData;
+        }
+
+        function calculateReflectionRatio(data, sobelData, sobelThreshold) {
+            let reflectionCount = 0;
+            let totalCount = 0;
+             for (let i = 0; i < data.length; i++) {
+                if (sobelData[i] > sobelThreshold) { // 只計算 Sobel 邊緣強度大於閾值的像素
+                        if (data[i] > 128) { // 判斷像素是否為亮色
+                        reflectionCount++;
+                    }
+                totalCount++;
+                }
+            }
+            return reflectionCount / totalCount;
+        }
+
+        // 確保攝影機畫面已經載入後再開始更新畫面
+        video.addEventListener('loadedmetadata', function() {
+            // 設置畫布大小為攝影機畫面大小
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+
+            // 開始持續更新畫面
+            requestAnimationFrame(renderFrame);
+        });
+
+		// 當使用者點擊按鈕時，觸發偵測反光的函式
+		detectBtn.addEventListener('click', detectReflection);
+
+		getMediaStream();
+        renderFrame();
+	</script>
+</body>
+</html>
