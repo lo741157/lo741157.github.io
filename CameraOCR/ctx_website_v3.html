@@ -21,9 +21,23 @@
 
 		// 取得攝影機影像
 		async function getMediaStream() {
-			const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-			video.srcObject = stream;
-			await video.play();
+			try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                video.srcObject = stream;
+                video.play();
+            } catch (err) {
+                // 檢查是否為手機瀏覽器，並在 touchstart 事件上啟動攝影機
+                if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+                    video.setAttribute('controls', '');
+                    video.removeAttribute('controls');
+                    video.play();
+                    document.addEventListener('touchstart', () => {
+                        video.play();
+                    });
+                } else {
+                    console.error(err);
+                }
+            }
 		}
         
         // 持續顯示攝影機畫面
