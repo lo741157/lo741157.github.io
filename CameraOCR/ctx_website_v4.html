@@ -10,18 +10,20 @@
 	<button id="detect-btn">偵測反光</button>
 	<div id="result"></div>
     <script src="https://docs.opencv.org/master/opencv.js"></script>
-	<script>
+	<script>        
         const video = document.getElementById('video_t');
 		const canvas = document.getElementById('canvas');
 		const ctx = canvas.getContext('2d');
 		const detectBtn = document.getElementById('detect-btn');
 		const result = document.getElementById('result');
+        var access = false;
 
 		// 取得攝影機影像
 		async function getMediaStream() {
 			const stream = await navigator.mediaDevices.getUserMedia({ video: true });
 			video.srcObject = stream;
 			await video.play();
+            access = true;
             
             // 設定 Canvas 大小與攝影機的解析度相同
             canvas.width = video.videoWidth;
@@ -41,6 +43,88 @@
         function renderFrame() {
             ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
             requestAnimationFrame(renderFrame);
+            if(access) draw();
+        }
+
+        // 畫出背景及偵測框
+        function draw() {            
+            ctx.save();
+            
+            drawCutouts();
+            strokeCutoutShapes();
+            ctx.restore();
+        }
+
+        /**
+         * 畫那些需要簍空的图形
+         * CW代表Clockwise顺時針
+         * CCW代表counter-clockwise逆時針
+         */
+        function drawCutouts() {
+            ctx.beginPath();
+            
+            addOuterRectanglePath();//CW
+            addRectanglePath();//CCW
+
+            ctx.fill();//Cut out shapes
+        }
+
+        /**
+         * 簍空描邊
+         */
+        function strokeCutoutShapes() {
+            ctx.save();
+
+            ctx.beginPath();
+            addOuterRectanglePath();//CW
+            ctx.stroke();
+
+            addRectanglePath();//CCW
+            ctx.stroke();
+        }
+
+        /**
+         * 取得整個畫布區塊
+         * @param x
+         * @param y
+         * @param w
+         * @param h
+         */
+        function rect(x,y,w,h) {
+            ctx.moveTo(x,y);
+            ctx.lineTo(x,y+h);
+            ctx.lineTo(x+w,y+h);
+            ctx.lineTo(x+w,y);
+            ctx.closePath();
+        }
+
+        /**
+         * 取得中間矩形
+         * @param x
+         * @param y
+         * @param w
+         * @param h
+         * @param radius 圓角半徑
+         */
+        function rectRadius(x,y,w,h,radius){
+            ctx.moveTo(x, y - radius);
+            ctx.arc(x+radius, y + h - radius, radius, Math.PI, Math.PI/2, true);
+            ctx.arc(x + w - radius, y + h - radius, radius, Math.PI/ 2, 0, true);
+            ctx.arc(x + w - radius, y - radius, radius, 0, Math.PI* 1.5, true);
+            ctx.arc(x + radius, y - radius, radius, Math.PI* 1.5, Math.PI, true);
+            ctx.closePath();
+        }
+
+        function addOuterRectanglePath() {
+            ctx.fillStyle = "rgba(0, 0, 0, 0.8)";
+            ctx.rect(0, 0, canvas.width, canvas.height);
+        }
+
+        function addRectanglePath() {
+            ctx.strokeStyle = "yellow";
+            ctx.globalAlpha = 0.7;
+            ctx.lineWidth = 3;
+            rectRadius(150,100,400,250,20);
         }
 
 		// 偵測反光
