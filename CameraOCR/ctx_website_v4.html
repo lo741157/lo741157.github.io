@@ -39,7 +39,22 @@
 
 		// 取得攝影機影像
 		async function getMediaStream() {
-			const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+            let constraints = { video: { facingMode: "environment" } };
+
+            if (navigator.mediaDevices.enumerateDevices) {
+                const devices = await navigator.mediaDevices.enumerateDevices();
+                const videoDevices = devices.filter(device => device.kind === "videoinput");
+
+                // 找到後置攝像頭
+                const rearCamera = videoDevices.find(device => device.label.toLowerCase().includes("back"));
+
+                if (rearCamera) {
+                    constraints.video.deviceId = { exact: rearCamera.deviceId };
+                }
+            }
+
+            const stream = await navigator.mediaDevices.getUserMedia(constraints);
+			//const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: { exact: "environment" } } });
 			video.srcObject = stream;
 			await video.play();
             
