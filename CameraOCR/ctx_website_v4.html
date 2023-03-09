@@ -5,13 +5,15 @@
 </head>
 <body>
 	<h1>反光偵測</h1>
+    <video id="video_t" autoPlay playsInline muted loop></video>
 	<canvas id="canvas" width="640" height="480"></canvas>
 	<button id="update-btn">更新畫面</button>
 	<button id="detect-btn">偵測反光</button>
 	<div id="result"></div>
     <script src="https://docs.opencv.org/master/opencv.js"></script>
 	<script>
-		const video = document.createElement('video');
+		// const video = document.createElement('video');
+        const video = document.getElementById('video_t');
 		const canvas = document.getElementById('canvas');
 		const ctx = canvas.getContext('2d');
 		const detectBtn = document.getElementById('detect-btn');
@@ -20,13 +22,7 @@
 
 		// 取得攝影機影像
 		async function getMediaStream() {
-			const stream = await navigator.mediaDevices.getUserMedia({ 
-                video: {
-                    autoPlay: true,
-                    playsInline: true,
-                    muted: true,
-                }
-             });
+			const stream = await navigator.mediaDevices.getUserMedia({ video: true });
 			video.srcObject = stream;
 			await video.play();
 		}
@@ -35,14 +31,16 @@
         function renderFrame() {
             setTimeout(() => {
                 try {
-                    updateBtn.innerHTML += 1;
+                    // updateBtn.innerHTML += 1;
+                    console.log(video);
                     ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
                     requestAnimationFrame(renderFrame);
                 }
                 catch (e) {
-                    updateBtn.innerHTML += e;
+                    // updateBtn.innerHTML += e;
+                    console.log(e);
                 }
-            }, 1000/60);
+            }, 1000/10);
         }
 
 		// 偵測反光
