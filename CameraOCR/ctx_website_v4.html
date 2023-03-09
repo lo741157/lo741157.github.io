@@ -4,11 +4,11 @@
 	<title>反光偵測</title>
 </head>
 <body>
-	<!-- <h1>反光偵測</h1> -->
-    <video id="video_t" autoPlay playsInline muted loop style="display: none;"></video>
+	<h1>反光偵測</h1>
+    <video id="video_t" autoPlay playsInline muted loop></video>
 	<canvas id="canvas" width="640" height="480"></canvas>
-	<!-- <button id="update-btn">更新畫面</button> -->
-	<!-- <button id="detect-btn">偵測反光</button> -->
+	<button id="update-btn">更新畫面</button>
+	<button id="detect-btn">偵測反光</button>
 	<div id="result"></div>
     <script src="https://docs.opencv.org/master/opencv.js"></script>
 	<script>
@@ -16,101 +16,31 @@
         const video = document.getElementById('video_t');
 		const canvas = document.getElementById('canvas');
 		const ctx = canvas.getContext('2d');
-		// const detectBtn = document.getElementById('detect-btn');
-		// const updateBtn = document.getElementById('update-btn');
+		const detectBtn = document.getElementById('detect-btn');
+		const updateBtn = document.getElementById('update-btn');
 		const result = document.getElementById('result');
-
-        function resizeCanvas() {
-            // 計算攝影機畫面的寬高比例
-            const aspectRatio = video.videoWidth / video.videoHeight;
-        
-            // 調整 canvas 的大小，讓畫面比例不變
-            if (window.innerWidth / window.innerHeight > aspectRatio) {
-                canvas.width = window.innerHeight * aspectRatio;
-                canvas.height = window.innerHeight;
-            } else {
-                canvas.width = window.innerWidth;
-                canvas.height = window.innerWidth / aspectRatio;
-            }
-        }
-
-        // 當視窗大小改變時重新調整 canvas 大小
-        window.addEventListener('resize', resizeCanvas);
 
 		// 取得攝影機影像
 		async function getMediaStream() {
-            let constraints = { video: { facingMode: "environment" } };
-
-            if (navigator.mediaDevices.enumerateDevices) {
-                const devices = await navigator.mediaDevices.enumerateDevices();
-                const videoDevices = devices.filter(device => device.kind === "videoinput");
-
-                // 找到後置攝像頭
-                const rearCamera = videoDevices.find(device => device.label.toLowerCase().includes("back"));
-
-                if (rearCamera) {
-                    constraints.video.deviceId = { exact: rearCamera.deviceId };
-                }
-            }
-
-            const stream = await navigator.mediaDevices.getUserMedia(constraints);
-			//const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: { exact: "environment" } } });
+			const stream = await navigator.mediaDevices.getUserMedia({ video: true });
 			video.srcObject = stream;
 			await video.play();
-            
-            // 當攝影機畫面載入完成時，調整 canvas 大小
-            video.addEventListener('loadedmetadata', () => {
-                resizeCanvas();
-            });
 		}
         
         // 持續顯示攝影機畫面
         function renderFrame() {
-            // 取得畫面寬度和高度
-            let width = video.videoWidth;
-            let height = video.videoHeight;
-
-            // 如果目前的畫面方向是垂直的
-            if (window.innerHeight > window.innerWidth) {
-                // 將畫面寬度和高度互換
-                [width, height] = [height, width];
-                // 旋轉畫布
-                ctx.translate(canvas.width, 0);
-                ctx.rotate(Math.PI / 2);
-            }
-
-            // 計算縮放比例
-            const scale = Math.min(canvas.width / width, canvas.height / height);
-
-            // 計算縮放後的畫面寬度和高度
-            const scaledWidth = width * scale;
-            const scaledHeight = height * scale;
-
-            // 計算畫面的位置
-            const x = (canvas.width - scaledWidth) / 2;
-            const y = (canvas.height - scaledHeight) / 2;
-
-            // 清除畫布
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            // 繪製攝影機畫面
-            ctx.drawImage(
-                video,
-                0,
-                0,
-                width,
-                height,
-                x,
-                y,
-                scaledWidth,
-                scaledHeight
-            );
-
-            // 重置畫布的變換
-            ctx.setTransform(1, 0, 0, 1, 0, 0);
-            
-            //ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-            requestAnimationFrame(renderFrame);
+            setTimeout(() => {
+                try {
+                    // updateBtn.innerHTML += 1;
+                    console.log(video);
+                    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                    requestAnimationFrame(renderFrame);
+                }
+                catch (e) {
+                    // updateBtn.innerHTML += e;
+                    console.log(e);
+                }
+            }, 1000/10);
         }
 
 		// 偵測反光
@@ -178,16 +108,12 @@
 		}
 
 		// 當使用者點擊按鈕時，觸發偵測反光的函式
-		// detectBtn.addEventListener('click', detectReflection);
+		detectBtn.addEventListener('click', detectReflection);
 		// 當使用者點擊按鈕時，觸發更新鏡頭畫面
-        // updateBtn.addEventListener('click', renderFrame);
+        updateBtn.addEventListener('click', renderFrame);
 
 		getMediaStream();
-        //renderFrame();
-        // 開始取得攝影機畫面和持續更新畫面
-        getMediaStream().then(() => {
-            requestAnimationFrame(renderFrame);
-        });
+        // renderFrame();
 	</script>
 </body>
 </html>
