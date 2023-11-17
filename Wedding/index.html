@@ -47,61 +47,33 @@
             </div>
         </header>
         <!-- When & Where-->
-        <section class="about-section text-center" id="whenAndwhere">
+        <section class="projects-section bg-light" id="whenAndwhere">
             <div class="container px-4 px-lg-5">
-                <div class="row gx-4 gx-lg-5 justify-content-center">
-                    <div class="col-lg-8">
-                        <h2 class="text-white mb-4">Built with Bootstrap 5</h2>
-                        <p class="text-white-50">
-                            Grayscale is a free Bootstrap theme created by Start Bootstrap. It can be yours right now, simply download the template on
-                            <a href="https://startbootstrap.com/theme/grayscale/">the preview page.</a>
-                            The theme is open source, and you can use it for any purpose, personal or commercial.
-                        </p>
-                    </div>
+                <div class="row gx-0 mb-5 mb-lg-0 justify-content-center">
+                    <div class="col-lg-6"><img class="img-fluid" src="assets/img/Wedding Invitation/front.png" alt="..." /></div>
+                    <div class="col-lg-6"><img class="img-fluid" src="assets/img/Wedding Invitation/back.png" alt="..." /></div>
                 </div>
-                <img class="img-fluid" src="assets/img/ipad.png" alt="..." />
             </div>
         </section>
         <!-- Ourphotos-->
-        <section class="projects-section bg-light" id="ourphotos">
+        <section class="projects-section text-center" id="ourphotos">
             <div class="container px-4 px-lg-5">
-                <!-- Featured Project Row-->
-                <div class="row gx-0 mb-4 mb-lg-5 align-items-center">
-                    <div class="col-xl-8 col-lg-7"><img class="img-fluid mb-3 mb-lg-0" src="assets/img/bg-masthead.jpg" alt="..." /></div>
-                    <div class="col-xl-4 col-lg-5">
-                        <div class="featured-text text-center text-lg-left">
-                            <h4>Shoreline</h4>
-                            <p class="text-black-50 mb-0">Grayscale is open source and MIT licensed. This means you can use it for any project - even commercial projects! Download it, customize it, and publish your website!</p>
-                        </div>
+                <!-- Carousel -->
+                <div id="projectCarousel" class="carousel slide" data-bs-ride="carousel">
+                    <div class="carousel-inner" id="carousel-inner">
+                        <!-- Carousel items will be added here dynamically -->
                     </div>
-                </div>
-                <!-- Project One Row-->
-                <div class="row gx-0 mb-5 mb-lg-0 justify-content-center">
-                    <div class="col-lg-6"><img class="img-fluid" src="assets/img/demo-image-01.jpg" alt="..." /></div>
-                    <div class="col-lg-6">
-                        <div class="bg-black text-center h-100 project">
-                            <div class="d-flex h-100">
-                                <div class="project-text w-100 my-auto text-center text-lg-left">
-                                    <h4 class="text-white">Misty</h4>
-                                    <p class="mb-0 text-white-50">An example of where you can put an image of a project, or anything else, along with a description.</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- Project Two Row-->
-                <div class="row gx-0 justify-content-center">
-                    <div class="col-lg-6"><img class="img-fluid" src="assets/img/demo-image-02.jpg" alt="..." /></div>
-                    <div class="col-lg-6 order-lg-first">
-                        <div class="bg-black text-center h-100 project">
-                            <div class="d-flex h-100">
-                                <div class="project-text w-100 my-auto text-center text-lg-right">
-                                    <h4 class="text-white">Mountains</h4>
-                                    <p class="mb-0 text-white-50">Another example of a project with its respective description. These sections work well responsively as well!</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <!-- Carousel controls -->
+                    <button class="carousel-control-prev" type="button" data-bs-target="#projectCarousel" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Previous</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#projectCarousel" data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Next</span>
+                    </button>
+                    <!-- Page Number Display -->
+                    <div class="page-number-display text-uppercase m-0" style="padding-top:26px;" id="page-number-display"></div>
                 </div>
             </div>
         </section>
@@ -165,10 +137,41 @@
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
         <!-- Core theme JS-->
         <script src="js/scripts.js"></script>
-        <!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *-->
-        <!-- * *                               SB Forms JS                               * *-->
-        <!-- * * Activate your form at https://startbootstrap.com/solution/contact-forms * *-->
-        <!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *-->
         <script src="https://cdn.startbootstrap.com/sb-forms-latest.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     </body>
 </html>
+
+
+<script>
+    const images = [];
+    // 生成檔名列表
+    for (let i = 1; i <= 59; i++) {
+        const numberStr = i.toString().padStart(2, '0');
+        images.push(`image-${numberStr}.jpg`);
+    }
+
+    // 生成輪播項目和更新頁碼
+    const carouselInner = document.getElementById('carousel-inner');
+    const pageNumberDisplay = document.getElementById('page-number-display');
+    images.forEach((img, index) => {
+        const carouselItem = document.createElement('div');
+        carouselItem.className = 'carousel-item' + (index === 0 ? ' active' : '');
+        carouselItem.innerHTML = `<img class="img-fluid" src="assets/img/WeddingPhotos/${img}" alt="Image ${index + 1}" />`;
+        carouselInner.appendChild(carouselItem);
+    });
+
+    // 更新頁碼顯示
+    function updatePageNumber(currentIndex) {
+        pageNumberDisplay.textContent = `Page ${currentIndex + 1} of ${images.length}`;
+    }
+
+    // 初始化頁碼
+    updatePageNumber(0);
+
+    // 監聽輪播事件以更新頁碼
+    $('#projectCarousel').on('slide.bs.carousel', function (event) {
+        updatePageNumber(event.to);
+    });
+</script>
+
