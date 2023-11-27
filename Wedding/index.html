@@ -48,7 +48,7 @@
         </header>
         <!-- When & Where-->
         <section class="bg-light" style="padding: 40px 0 10px;" id="whenAndwhere">
-            <div class="container px-4 px-lg-5">
+            <div class="container px-4 px-lg-5" style="text-align: center;">
                 <div class="row gx-0 mb-5 mb-lg-0 justify-content-center">
                     <div class="col-lg-6" style="padding: 10px;"><img class="img-fluid" src="assets/img/Wedding Invitation/front.png" alt="..." /></div>
                     <div class="col-lg-6" style="padding: 10px;"><img class="img-fluid" src="assets/img/Wedding Invitation/back.png" alt="..." /></div>
@@ -96,6 +96,16 @@
                     <div class="col-md-4 mb-3 mb-md-0">
                         <div class="card py-4 h-100">
                             <div class="card-body text-center">
+                                <i class="fa-solid fa-venus text-primary mb-2"></i>
+                                <h4 class="text-uppercase m-0">聯繫新娘</h4>
+                                <hr class="my-4 mx-auto" />
+                                <div class="small text-black-50"><a href="https://line.me/ti/p/RqpUoro5P0" target="_blank">ID:j8882033</a></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3 mb-md-0">
+                        <div class="card py-4 h-100">
+                            <div class="card-body text-center">
                                 <i class="fa-brands fa-line text-primary mb-2"></i>
                                 <h4 class="text-uppercase m-0">官方Line</h4>
                                 <hr class="my-4 mx-auto" />
@@ -106,20 +116,10 @@
                     <div class="col-md-4 mb-3 mb-md-0">
                         <div class="card py-4 h-100">
                             <div class="card-body text-center">
-                                <i class="fas fa-envelope text-primary mb-2"></i>
-                                <h4 class="text-uppercase m-0">Email</h4>
+                                <i class="fa-solid fa-mars text-primary mb-2"></i>
+                                <h4 class="text-uppercase m-0">聯繫新郎</h4>
                                 <hr class="my-4 mx-auto" />
-                                <div class="small text-black-50"><a href="mailto:lo741157@gmail.com">lo741157@gmail.com</a></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4 mb-3 mb-md-0">
-                        <div class="card py-4 h-100">
-                            <div class="card-body text-center">
-                                <i class="fas fa-mobile-alt text-primary mb-2"></i>
-                                <h4 class="text-uppercase m-0">Phone</h4>
-                                <hr class="my-4 mx-auto" />
-                                <div class="small text-black-50"><a href="tel:+886954060399">+886 954-060-399</a></div>
+                                <!-- <div class="small text-black-50"><a href="https://line.me/ti/p/%40837ycxbc" target="_blank">ID:@837ycxbc</a></div> -->
                             </div>
                         </div>
                     </div>
@@ -147,8 +147,8 @@
     const images = [];
     // 生成檔名列表
     for (let i = 1; i <= 19; i++) {
-        const numberStr = i.toString().padStart(2, '0');
-        images.push(`image-${numberStr}.jpg`);
+        const numberStr = i.toString();
+        images.push(`${numberStr}.jpg`);
     }
 
     // 生成輪播項目和更新頁碼
