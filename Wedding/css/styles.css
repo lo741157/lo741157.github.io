@@ -11202,3 +11202,34 @@ body {
 .footer {
   padding: 5rem 0;
 }
+
+#googleMap {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 60px 0;
+}
+
+#googleMap iframe {
+  border: 0;
+  margin-right: 20px; /* 留出一些間隙 */
+  width: 300px; /* 或百分比，根據需要調整 */
+  height: 450px;
+}
+
+#googleMap img {
+  max-width: 50%; /* 或其他適合的尺寸 */
+}
+
+/* 響應式調整 */
+@media (max-width: 768px) {
+  #googleMap {
+      flex-direction: column;
+  }
+  #googleMap iframe,
+  #googleMap img {
+      max-width: 100%;
+      margin-bottom: 20px;
+  }
+}
