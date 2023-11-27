@@ -11203,6 +11203,7 @@ body {
   padding: 5rem 0;
 }
 
+/*地圖樣式*/
 #googleMap {
   display: flex;
   justify-content: center;
@@ -11214,12 +11215,12 @@ body {
 #googleMap iframe {
   border: 0;
   margin-right: 20px; /* 留出一些間隙 */
-  width: 300px; /* 或百分比，根據需要調整 */
+  width: 100%; /* 或百分比，根據需要調整 */
   height: 450px;
 }
 
 #googleMap img {
-  max-width: 50%; /* 或其他適合的尺寸 */
+  max-width: 100%; /* 或其他適合的尺寸 */
 }
 
 /* 響應式調整 */
@@ -11233,44 +11234,4 @@ body {
       margin-bottom: 20px;
   }
 }
-
-/* 模態 (背景) */
-.modal {
-  display: none; /* 隱藏模態 */
-  position: fixed; /* 固定定位 */
-  z-index: 1; /* 位於頂層 */
-  padding-top: 100px; /* 位置 */
-  left: 0;
-  top: 0;
-  width: 100%; /* 寬度 */
-  height: 100%; /* 高度 */
-  overflow: auto; /* 啟用滾動條 */
-  background-color: rgb(0,0,0); /* 背景色 */
-  background-color: rgba(0,0,0,0.9); /* 黑色w/不透明度 */
-}
-
-/* 模態內容 */
-.modal-content {
-  margin: 60px auto;
-  display: block;
-  width: 100%;
-  /* max-width: 700px; */
-}
-
-/* 關閉按鈕 */
-.close {
-  position: absolute;
-  top: 110px;
-  right: 35px;
-  color: #f1f1f1;
-  font-size: 40px;
-  font-weight: bold;
-  transition: 0.3s;
-}
-
-.close:hover,
-.close:focus {
-  color: #bbb;
-  text-decoration: none;
-  cursor: pointer;
-}
+/*地圖樣式*/

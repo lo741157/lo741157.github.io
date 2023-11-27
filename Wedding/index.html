@@ -90,13 +90,6 @@
                     <div class="page-number-display text-uppercase m-0" style="padding-top:26px;" id="page-number-display"></div>
                 </div>
             </div>
-            <!-- 圖片模態 -->
-            <div id="imageModal" class="modal">
-                <!-- 模態內容 -->
-                <span class="close">&times;</span>
-                <img class="modal-content" id="img01">
-                <div id="caption"></div>
-            </div>
         </section>
         <!-- Attend Investigation-->
         <section class="signup-section" id="attendInvestigation">
@@ -172,15 +165,6 @@
         images.push(`${numberStr}.jpg`);
     }
 
-    var modal = document.getElementById("imageModal");
-
-    // 獲取放大圖片的模態內容和字幕
-    var modalImg = document.getElementById("img01");
-    var captionText = document.getElementById("caption");
-
-    // 獲取<span>元素，用於關閉模態
-        var span = document.getElementsByClassName("close")[0];
-
     // 生成輪播項目和更新頁碼
     const carouselInner = document.getElementById('carousel-inner');
     const pageNumberDisplay = document.getElementById('page-number-display');
@@ -189,14 +173,6 @@
         carouselItem.className = 'carousel-item' + (index === 0 ? ' active' : '');
         carouselItem.innerHTML = `<img class="img-fluid" src="assets/img/WeddingPhotos/${img}" alt="Image ${index + 1}" />`;
         carouselInner.appendChild(carouselItem);
-
-        // 為每個圖片添加點擊事件
-        const imageElement = carouselItem.querySelector('img');
-        imageElement.onclick = function(){
-            modal.style.display = "block";
-            modalImg.src = this.src;
-            captionText.innerHTML = this.alt;
-        }
     });
 
     // 更新頁碼顯示
@@ -211,11 +187,6 @@
     $('#projectCarousel').on('slide.bs.carousel', function (event) {
         updatePageNumber(event.to);
     });
-
-    // 當點擊 <span> (x), 關閉模態
-    span.onclick = function() { 
-        modal.style.display = "none";
-    }
 
 </script>
 
