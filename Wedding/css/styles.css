@@ -11094,7 +11094,7 @@ body {
   font-family: "Varela Round", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   font-size: 15px;
   /* line-height: 32px; */
-  letter-spacing: 0.11rem;
+  letter-spacing: 0.1rem;
   background: linear-gradient(rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.9));
   -webkit-text-fill-color: transparent;
   -webkit-background-clip: text;
